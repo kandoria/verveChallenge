@@ -23,7 +23,8 @@ public class UniqueRequestCounterService {
     private static final Logger fileLogger = LoggerFactory.getLogger("FileLogger");
     private static final String kafkaTopic = "unique-request-counts";
 
-//    private final Map<String, Set<Integer>> minuteRequests = new ConcurrentHashMap<>();
+    // Created for Part 1 implementation
+    // private final Map<String, Set<Integer>> minuteRequests = new ConcurrentHashMap<>();
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -34,7 +35,8 @@ public class UniqueRequestCounterService {
 
     public void processRequests(int id, String endPoint) throws Exception {
         String currentMinute = getCurrentMinute();
-//        minuteRequests.computeIfAbsent(currentMinute, k -> ConcurrentHashMap.newKeySet()).add(id);
+        // Created for Part 1 implementation
+        // minuteRequests.computeIfAbsent(currentMinute, k -> ConcurrentHashMap.newKeySet()).add(id);
         Long result = redisTemplate.opsForSet().add(currentMinute, String.valueOf(id));
         boolean isUnique = Objects.equals(result, 1L);
 
@@ -45,11 +47,12 @@ public class UniqueRequestCounterService {
         }
     }
 
-    // Scheduled tot get unique counts in last minute.
+    // Scheduled to get unique counts in last minute.
     @Scheduled(fixedRate = 60000)
     public void logUniqueRequests() {
         String previousMinute = getPreviousMinute();
         int uniqueCount = getUniqueCount(previousMinute);
+        // Part 1 implementation
         fileLogger.info("Unique requests in the last minute: {}", uniqueCount);
         sentToKafka(uniqueCount);
         redisTemplate.delete(previousMinute);
@@ -74,7 +77,7 @@ public class UniqueRequestCounterService {
         consoleLogger.info("Sent to Kafka: {}", message);
     }
 
-    // Created as Part 1 implementation
+    // Created for Part 1 implementation
     private void sendHttpGetRequest(String endPoint, int count) throws Exception {
         try {
             String url = String.format("%s?count=%d", endPoint, count);
