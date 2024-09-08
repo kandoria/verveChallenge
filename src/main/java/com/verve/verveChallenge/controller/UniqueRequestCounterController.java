@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/verve")
 public class UniqueRequestCounterController {
-    private static final Logger logger = LoggerFactory.getLogger(UniqueRequestCounterController.class);
+    private static final Logger consoleLogger = LoggerFactory.getLogger(UniqueRequestCounterController.class);
 
     @Autowired
     private UniqueRequestCounterService uniqueRequestCounterService;
@@ -28,11 +28,11 @@ public class UniqueRequestCounterController {
             uniqueRequestCounterService.processRequests(id, endpoint);
             return ResponseEntity.status(HttpStatus.OK).body("ok");
         } catch (HttpRequestException hse) {
-            logger.error("Error sending HTTP GET request to {}. Status code: {}", endpoint, hse.getStatusCode());
+            consoleLogger.error("Error sending HTTP GET request to {}. Status code: {}", endpoint, hse.getStatusCode());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("failed");
         }
         catch (Exception e) {
-            logger.error("Filed to send http request: ", e);
+            consoleLogger.error("Filed to send http request: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("failed");
         }
     }

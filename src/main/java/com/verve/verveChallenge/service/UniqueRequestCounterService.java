@@ -1,6 +1,5 @@
 package com.verve.verveChallenge.service;
 
-import com.verve.verveChallenge.controller.UniqueRequestCounterController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,10 @@ import com.verve.verveChallenge.exception.HttpRequestException;
 
 @Service
 public class UniqueRequestCounterService {
-    private static final Logger logger = LoggerFactory.getLogger(UniqueRequestCounterController.class);
+    private static final Logger consoleLogger = LoggerFactory.getLogger(UniqueRequestCounterService.class);
     private static final Logger fileLogger = LoggerFactory.getLogger("FileLogger");
+    private static final String kafkaTopic = "unique-request-counts";
+
 //    private final Map<String, Set<Integer>> minuteRequests = new ConcurrentHashMap<>();
 
     @Autowired
@@ -40,7 +41,7 @@ public class UniqueRequestCounterService {
         if(isUnique && endPoint!=null && !endPoint.isEmpty()) {
             int uniqueCount = getUniqueCount(currentMinute);
             ResponseEntity<String> response = sendHttpPostRequest(endPoint, uniqueCount);
-            logger.info("HTTP POST request sent to {}. Status code: {}", endPoint, response.getStatusCode());
+            consoleLogger.info("HTTP POST request sent to {}. Status code: {}", endPoint, response.getStatusCode());
         }
     }
 
@@ -69,8 +70,8 @@ public class UniqueRequestCounterService {
 
     private void sentToKafka(int uniqueCount) {
         String message = String.format("Unique requests in the last minute: %d", uniqueCount);
-        kafkaTemplate.send("unique-request-counts", message);
-        logger.info("Sent to Kafka: {}", message);
+        kafkaTemplate.send(kafkaTopic, message);
+        consoleLogger.info("Sent to Kafka: {}", message);
     }
 
     // Created as Part 1 implementation
@@ -78,7 +79,7 @@ public class UniqueRequestCounterService {
         try {
             String url = String.format("%s?count=%d", endPoint, count);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            logger.info("HTTP GET request sent to {}. Status code: {}", url, response.getStatusCode());
+            consoleLogger.info("HTTP GET request sent to {}. Status code: {}", url, response.getStatusCode());
         } catch (HttpStatusCodeException hse) {
             throw new HttpRequestException("HTTP request failed", hse.getStatusCode());
         }
