@@ -11,7 +11,10 @@
 ## Run Application with extensions implemented:
 - This code is stored in `main` branch of the repository
 - To run this you need docker. Use following commands:
-  - `./mvnw clean package -DskipTests`
+  - (Optional) Run if you want to run local code `./mvnw clean package -DskipTests`
+  - (Optional) If you want to run local code, replace `image: ritik0503/verveuniquecounter:latest` in `docker-compose.yml`
+  with `build: .`.
+  - Else image is present on docker hub at `ritik0503/verveuniquecounter:latest`. Just run below steps and ignore above 2.
   - `docker-compose build`
   - `docker-compose up -d`
   - Make request to application using `curl --location 'http://localhost:8080/api/verve/accept?id=123&endpoint=http%3A%2F%2Fexample.com'`

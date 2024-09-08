@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    image: ritik0503/verveuniquecounter:latest
     ports:
       - "8080:8080"
     environment:
