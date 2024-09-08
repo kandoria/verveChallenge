@@ -11,7 +11,7 @@
 ## Run Application with extensions implemented:
 - This code is stored in `main` branch of the repository
 - To run this you need docker. Use following commands:
-  - `./mvnw clean package -DskipTests `
+  - `./mvnw clean package -DskipTests`
   - `docker-compose build`
   - `docker-compose up -d`
   - Make request to application using `curl --location 'http://localhost:8080/api/verve/accept?id=123&endpoint=http%3A%2F%2Fexample.com'`
